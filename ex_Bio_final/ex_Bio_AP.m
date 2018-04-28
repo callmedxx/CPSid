@@ -19,8 +19,8 @@
 %
 clear all
 close all
-addpath('./tools');
-addpath('./data');
+addpath('../tools');
+addpath('../data');
 
 
 %Initial conditions vector
