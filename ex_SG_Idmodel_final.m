@@ -6,6 +6,7 @@ close all
 addpath('./tools');
 addpath('./SLR_dev');
 addpath('./utils');
+addpath('./data');
 %%  load Data
 load('ex_SmartGrid_model.mat')
 % The nodes occur topology switching
