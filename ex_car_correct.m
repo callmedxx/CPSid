@@ -8,22 +8,23 @@ addpath('./data');
 
 
 basis_function.work='off';
-data=load('normal_car.mat');  %%  load Data
-index = 1000:1400;
-% index = 1:1934;
-flag = data.flag(index);   % 1:straghtway   0:curve
-dy = data.dy(index);
-v = data.v(index);
+data  = load('normal_car.mat');  %%  load Data
+
+
+flag = data.flag;   % 1:straghtway   0:curve
+dy = data.dy;
+v = data.v/10;
 
 
 %% library
-polyorder = 1;
-memory = 1;
+polyorder = 4;
+memory = 4;
 usesine  = 0;
 A= library(v,polyorder,usesine,memory,basis_function);
-% v_k1 = v(memory+1:end-1,:);
-% v_k2 = v(memory:end-2,:);
-% v_k3 = v(memory-1:end-3,:);
+v_k1 = v(memory+1:end-1,:);
+v_k2 = v(memory:end-2,:);
+v_k3 = v(memory-1:end-3,:);
+v_k4 = v(memory-2:end-4,:);
 v = v(memory+2:end,:);
 
 A = A(memory+2:end,:);
@@ -32,7 +33,7 @@ flag = flag(memory+2:end);
 
 %% identify subsystem
 
-parameter.lambda = [0.1 1e-5];   % the lambda of z in algorithm 1.
+parameter.lambda = [0.01 1e-5];   % the lambda of z in algorithm 1.
 parameter.MAXITER = 5;
 parameter.max_s = 20;%the max s
 parameter.epsilon = [100  8];
@@ -53,11 +54,11 @@ idx_sys = final_result.idx;
 
 
 %% identify logic
-% Phi2 = [ones(size(flag)) flag 1./v sin(v) cos(v) v.^2  v_k1./v_k2 v_k3.^2 ];
-Phi2 = [ones(size(flag)) flag ];
+Phi2 = [ones(size(flag)) flag  sin(v) cos(v) tan(v) (v_k1-v_k4)./v_k2  v_k1.*tan(v_k3)];
+% Phi2 = [ones(size(flag)) flag ];
 
 para_log.idx_sys = idx_sys;
-para_log.beta = .5;
+para_log.beta = .001;
 para_log.y = dy;
 para_log.Phi2 = Phi2;
 para_log.normalize = 1;
@@ -99,16 +100,20 @@ figure(2)
 axes1 = axes('Parent',figure(2));
 hold on
 color = {'r' ,'b'};
+input1 = zeros(size(dy,1),2);
 for i =1:2
-    input1 = zeros(size(dy));
-    input1(ans_sys_idx{i},1) = dy(ans_sys_idx{i},1);
     
-    input1(input1==0)=nan;
+    input1(ans_sys_idx{i},i) = dy(ans_sys_idx{i},1);
     
-    plot(input1(:,1),'Color',color{i},'LineWidth',3);
+    input1(input1(:,i)==0,i)=nan;
+    
+    plot(input1(:,i),'Color',color{i},'LineWidth',3);
     
     
 end
+
+
+
 legend('Subsystem_1','Subsystem_2')
 
 xlabel('Time(4ms)','FontWeight','bold');
@@ -116,5 +121,3 @@ ylabel('du','FontWeight','bold');
 box(axes1,'on');
 set(axes1,'FontSize',14,'FontWeight','bold','LineWidth',1.5);
 legend(axes1,'show');
-
-
