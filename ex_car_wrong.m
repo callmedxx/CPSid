@@ -21,6 +21,7 @@ A= library(v,polyorder,usesine,memory,basis_function);
 v_k1 = v(memory+1:end-1,:);
 v_k2 = v(memory:end-2,:);
 v_k3 = v(memory-1:end-3,:);
+v_k4 = v(memory-2:end-4,:);
 A = A(memory+2:end,:);
 dy = dy(memory+2:end);
 v = v(memory+2:end);
@@ -48,7 +49,7 @@ idx_sys = final_result.idx;
 
 %% identify logic
 
-Phi2 = [ones(size(flag)) flag 1./v sin(v) cos(v) v.^2  v_k1./v_k2 v_k3.^2 ];
+Phi2 = [ones(size(flag)) flag  sin(v) cos(v) tan(v) (v_k1-v_k4)./v_k2  v_k1.*tan(v_k3)];
 
 para_log.idx_sys = idx_sys;
 para_log.beta = 0.1;
