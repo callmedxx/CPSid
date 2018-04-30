@@ -5,13 +5,15 @@ close all
 
 addpath('./tools');
 addpath('./SLR_dev');
-addpath('./utils');
 addpath('./data');
+
 %%  load Data
 load('ex_SmartGrid_model.mat')
+
 % The nodes occur topology switching
 choose_node=[11 12 22];
 final_result = cell(0);
+
 %% identify subsystem
 for jj =1:size(choose_node,2)
     %% S is power data at the node, A is dictionary matrix
@@ -53,7 +55,7 @@ for jj =1:size(choose_node,2)
     
     vol=[];
     for kk=1:33
-        vol = [vol reshape([real(deltaV_mag(:,kk)) real(deltaV_mag(:,kk))]',length(index),1)];
+        vol = [vol reshape([deltaV_mag(:,kk) deltaV_mag(:,kk)]', length(index),1)];
     end
     
     Phi2 = [vol ones(length(index),1) ];
