@@ -66,7 +66,7 @@ parameter.y = y;
 parameter.normalize_y = 1;
 [result]=ihyde(parameter);
 
-% [check]=ihyde(dy(index),A(index,:),maxs, epsilon,z_lambda,MAXITER,normalize_dy);
+
 
 
 
